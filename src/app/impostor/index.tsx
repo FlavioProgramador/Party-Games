@@ -2,6 +2,7 @@ import { View } from 'react-native';
 import { useImpostorStore } from '@/games/impostor/store/useImpostorStore';
 
 import { SetupScreen } from '@/games/impostor/components/screens/SetupScreen';
+import { PreStartScreen } from '@/games/impostor/components/screens/PreStartScreen';
 import { RevealScreen } from '@/games/impostor/components/screens/RevealScreen';
 import { RoundScreen } from '@/games/impostor/components/screens/RoundScreen';
 import { VotingScreen } from '@/games/impostor/components/screens/VotingScreen';
@@ -16,6 +17,8 @@ export default function ImpostorGameController() {
     case 'setup':
     case 'how_to_play':
       return <SetupScreen />;
+    case 'pre_start':
+      return <PreStartScreen />;
     case 'reveal':
       return <RevealScreen />;
     case 'round':

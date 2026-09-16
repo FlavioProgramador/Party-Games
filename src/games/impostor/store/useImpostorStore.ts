@@ -24,6 +24,8 @@ interface ImpostorStoreActions {
   setPlayers: (players: Player[]) => void;
   updateSettings: (settings: Partial<GameSettings>) => void;
   startGame: () => void;
+  startReveal: () => void;
+  reshufflePlayOrder: () => void;
   nextReveal: () => void;
   endRound: () => void;
   registerVote: (voterId: string, votedId: string) => void;
@@ -46,6 +48,10 @@ export const useImpostorStore = create<ImpostorStore>()(
       updateSettings: (settings) => set(state => engine.updateSettings(state, settings)),
       
       startGame: () => set(state => engine.startGame(state, WORD_BANK)),
+      
+      startReveal: () => set(state => engine.startReveal(state)),
+      
+      reshufflePlayOrder: () => set(state => engine.reshufflePlayOrder(state)),
       
       nextReveal: () => set(state => engine.nextReveal(state)),
       

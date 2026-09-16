@@ -1,5 +1,6 @@
 export type GamePhase =
   | 'setup'
+  | 'pre_start'
   | 'how_to_play'
   | 'reveal'
   | 'round'

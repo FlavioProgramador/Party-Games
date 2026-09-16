@@ -36,7 +36,7 @@ export const createEngine = (deps: EngineDependencies) => {
 
       return {
         ...state,
-        phase: 'reveal',
+        phase: 'pre_start',
         word,
         impostorId,
         playOrder,
@@ -47,6 +47,15 @@ export const createEngine = (deps: EngineDependencies) => {
         impostorGuess: null,
         roundEndTime: null
       };
+    },
+
+    startReveal(state: ImpostorGameState): ImpostorGameState {
+      return { ...state, phase: 'reveal' };
+    },
+
+    reshufflePlayOrder(state: ImpostorGameState): ImpostorGameState {
+      const playOrder = deps.shuffleArray(state.players).map(p => p.id);
+      return { ...state, playOrder };
     },
 
     nextReveal(state: ImpostorGameState): ImpostorGameState {
