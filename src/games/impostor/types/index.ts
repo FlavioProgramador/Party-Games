@@ -26,6 +26,9 @@ export interface GameSettings {
   timeLimit: number; // In seconds. 0 = no limit
   impostorCount: number; // Always 1 in v1
   categoryId: string; // 'all' or specific ID
+  difficulty: 'easy' | 'normal' | 'hard';
+  impostorAdvantages: boolean;
+  votingType: 'all' | 'secret';
 }
 
 export interface VoteResult {

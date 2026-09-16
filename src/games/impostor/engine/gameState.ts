@@ -32,6 +32,9 @@ export const createInitialState = (settings: Partial<GameSettings> = {}): Impost
     timeLimit: 60,
     impostorCount: 1,
     categoryId: 'all',
+    difficulty: 'normal',
+    impostorAdvantages: false,
+    votingType: 'all',
     ...settings
   },
   word: null,
