@@ -8,11 +8,13 @@ import { theme } from '@/theme';
 import { GAME_REGISTRY } from '@/games/registry';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Gamepad2, Heart, BookOpen, User, Users, Timer, Smartphone, Flame, Lock } from 'lucide-react-native';
+import { useImpostorStore } from '@/games/impostor/store/useImpostorStore';
 
 export default function Home() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const resetToMenu = useImpostorStore(state => state.resetToMenu);
 
   // Constantes de responsividade
   const isDesktop = width > 768;
@@ -21,6 +23,9 @@ export default function Home() {
 
   const handleSelectGame = (gameId: string, available: boolean) => {
     if (available && gameId === 'impostor') {
+      // Sempre resetar o estado antes de iniciar uma nova partida,
+      // evitando que o estado persistido de uma sessão anterior interfira.
+      resetToMenu();
       router.push('/impostor');
     } else {
       Alert.alert('Aviso', 'Este jogo estará disponível em breve!');
