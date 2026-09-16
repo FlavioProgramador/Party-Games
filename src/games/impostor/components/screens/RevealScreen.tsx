@@ -1,144 +1,187 @@
-import { useState, useEffect } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
-import Animated, { useAnimatedStyle, withTiming, useSharedValue } from 'react-native-reanimated';
-import { Typography } from '../../../../components/Typography';
+import { Lock, ShieldAlert, ShieldQuestion, Users } from 'lucide-react-native';
+import { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { Extrapolation, interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../../../components/Button';
-import { Card } from '../../../../components/Card';
+import { Typography } from '../../../../components/Typography';
 import { theme } from '../../../../theme';
-import { useImpostorStore } from '../../store/useImpostorStore';
 import { selectCurrentPlayerReveal, selectIsImpostor } from '../../store/selectors';
+import { useImpostorStore } from '../../store/useImpostorStore';
 
 export function RevealScreen() {
   const store = useImpostorStore();
   const currentPlayer = selectCurrentPlayerReveal(store);
   const isImpostor = currentPlayer ? selectIsImpostor(currentPlayer.id)(store) : false;
-  
-  const [step, setStep] = useState<'pass' | 'reveal'>('pass');
-  const [isHolding, setIsHolding] = useState(false);
-  
-  const opacity = useSharedValue(0);
-  const scale = useSharedValue(1);
+  const insets = useSafeAreaInsets();
 
-  // Reset local state when player changes
+  const [isRevealed, setIsRevealed] = useState(false);
+  const flipRotation = useSharedValue(0);
+
+  const currentPlayerIndex = store.players.findIndex(p => p?.id === currentPlayer?.id);
+  const playerNumber = currentPlayerIndex !== -1 ? currentPlayerIndex + 1 : 1;
+  const totalPlayers = store.players.length;
+
   useEffect(() => {
-    setStep('pass');
-    setIsHolding(false);
-    opacity.value = 0;
-    scale.value = 1;
+    setIsRevealed(false);
+    flipRotation.value = 0;
   }, [store.revealedCount]);
 
-  const handlePressIn = () => {
-    setIsHolding(true);
-    opacity.value = withTiming(1, { duration: 300 });
-    scale.value = withTiming(0.98, { duration: 200 });
+  const handleToggleReveal = () => {
+    if (!isRevealed) {
+      setIsRevealed(true);
+      flipRotation.value = withTiming(180, { duration: 400 });
+    } else {
+      setIsRevealed(false);
+      flipRotation.value = withTiming(0, { duration: 400 });
+    }
   };
 
-  const handlePressOut = () => {
-    setIsHolding(false);
-    opacity.value = withTiming(0, { duration: 200 });
-    scale.value = withTiming(1, { duration: 200 });
+  const handleHideAndPass = () => {
+    setIsRevealed(false);
+    flipRotation.value = 0;
+    store.nextReveal();
   };
 
-  const animatedContentStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
+  const frontAnimatedStyle = useAnimatedStyle(() => {
+    const rotateY = interpolate(flipRotation.value, [0, 180], [0, 180], Extrapolation.CLAMP);
+    return {
+      transform: [{ perspective: 1000 }, { rotateY: `${rotateY}deg` }],
+      backfaceVisibility: 'hidden',
+      zIndex: flipRotation.value < 90 ? 2 : 1,
+    };
+  });
 
-  const animatedCardStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+  const backAnimatedStyle = useAnimatedStyle(() => {
+    const rotateY = interpolate(flipRotation.value, [0, 180], [180, 360], Extrapolation.CLAMP);
+    return {
+      transform: [{ perspective: 1000 }, { rotateY: `${rotateY}deg` }],
+      backfaceVisibility: 'hidden',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: flipRotation.value >= 90 ? 2 : 1,
+    };
+  });
 
   if (!currentPlayer) return <View style={styles.container} />;
-
-  if (step === 'pass') {
-    return (
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <Typography variant="label" color={theme.colors.textSecondary} style={{ marginBottom: theme.spacing.xl, letterSpacing: 2 }}>
-            SUA VEZ
-          </Typography>
-          
-          <Typography variant="h2" bold style={{ marginBottom: theme.spacing.md }}>
-            Entregue o celular para:
-          </Typography>
-          
-          <Typography variant="display" color={theme.colors.primary} bold style={{ marginBottom: theme.spacing.xxl, textAlign: 'center' }}>
-            {currentPlayer.name.toUpperCase()}
-          </Typography>
-          
-          <Button 
-            title="SOU EU" 
-            onPress={() => setStep('reveal')} 
-          />
-        </View>
-      </View>
-    );
-  }
 
   const glowColor = isImpostor ? theme.colors.danger : theme.colors.secondary;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Typography variant="h3" bold color={theme.colors.textSecondary} style={{ marginBottom: theme.spacing.lg }}>
-          {currentPlayer.name.toUpperCase()}
+    <View style={[styles.container, { paddingTop: Math.max(insets.top + 20, 40), paddingBottom: Math.max(insets.bottom + 20, 40) }]}>
+
+      {/* HEADER */}
+      <View style={styles.header}>
+        <View style={styles.headerItem}>
+          <Users size={16} color={theme.colors.secondary} style={{ marginRight: 6 }} />
+          <Typography variant="label" color={theme.colors.secondary} bold>Passe a vez</Typography>
+        </View>
+        <View style={styles.headerItemDark}>
+          <Typography variant="label" color={theme.colors.textSecondary}>Jogador {playerNumber} de {totalPlayers}</Typography>
+        </View>
+      </View>
+
+      <View style={styles.turnIndicator}>
+        <Typography variant="label" color={theme.colors.textSecondary} style={{ marginBottom: 4 }}>
+          DISPOSITIVO COM
         </Typography>
+        <Typography variant="display" bold>
+          {currentPlayer.name}
+        </Typography>
+      </View>
 
-        <Pressable 
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          style={styles.pressableArea}
-        >
-          <Animated.View style={[styles.cardContainer, animatedCardStyle]}>
-            <Card variant="modal" style={[styles.card, { borderColor: isHolding ? glowColor : 'rgba(255,255,255,0.12)' }]}>
-              
-              {!isHolding && (
-                <View style={styles.placeholder}>
-                  <Typography variant="h2" bold style={{ textAlign: 'center', marginBottom: theme.spacing.md }}>
-                    🤫
-                  </Typography>
-                  <Typography variant="h3" bold color={theme.colors.textMuted} style={{ textAlign: 'center' }}>
-                    Pressione e segure{'\n'}para revelar
-                  </Typography>
-                </View>
-              )}
+      {/* PRIVACY WARNING */}
+      <View style={styles.privacyBanner}>
+        <Lock size={14} color={theme.colors.danger} style={{ marginRight: 8 }} />
+        <Typography variant="caption" color={theme.colors.textSecondary}>
+          Mantenha a tela longe de olhares curiosos
+        </Typography>
+      </View>
 
-              <Animated.View style={[StyleSheet.absoluteFill, styles.secretContent, animatedContentStyle]}>
-                {isImpostor ? (
-                  <>
-                    <Typography variant="h2" bold color={theme.colors.danger} style={{ textAlign: 'center', marginBottom: theme.spacing.lg }}>
-                      VOCÊ É O IMPOSTOR
-                    </Typography>
-                    <Typography variant="label" color={theme.colors.textSecondary} style={{ textAlign: 'center', marginBottom: theme.spacing.sm }}>
-                      SUA DICA
-                    </Typography>
-                    <Typography variant="h3" bold style={{ textAlign: 'center', fontStyle: 'italic', marginBottom: theme.spacing.xl }}>
-                      "{store.word?.impostorHint}"
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    <Typography variant="label" color={theme.colors.textSecondary} style={{ textAlign: 'center', marginBottom: theme.spacing.md }}>
-                      SUA PALAVRA É
-                    </Typography>
-                    <Typography variant="display" bold color={theme.colors.secondary} style={{ textAlign: 'center', marginBottom: theme.spacing.xl }}>
-                      {store.word?.value.toUpperCase()}
-                    </Typography>
-                  </>
-                )}
-              </Animated.View>
+      {/* MAIN CARD AREA */}
+      <View style={styles.cardWrapper}>
+        <Pressable style={styles.cardPressable} onPress={handleToggleReveal} disabled={isRevealed}>
 
-            </Card>
+          {/* FRONT (HIDDEN) */}
+          <Animated.View style={[styles.cardSide, frontAnimatedStyle]}>
+            <View style={[styles.cardInner, { borderColor: 'rgba(255,255,255,0.05)' }]}>
+              <View style={styles.hiddenCardBadge}>
+                <Lock size={12} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
+                <Typography variant="caption" color={theme.colors.textSecondary} bold>ULTRA SECRETO</Typography>
+              </View>
+
+              <View style={styles.iconCircle}>
+                <ShieldQuestion size={48} color={theme.colors.primary} />
+              </View>
+
+              <Typography variant="h2" bold style={{ marginTop: theme.spacing.xl, marginBottom: 8 }}>
+                Identidade Encoberta
+              </Typography>
+              <Typography variant="caption" color={theme.colors.textSecondary} style={{ textAlign: 'center' }}>
+                Toque em qualquer lugar da{'\n'}carta para revelar
+              </Typography>
+            </View>
           </Animated.View>
-        </Pressable>
 
-        <Button 
-          title="PRÓXIMO" 
-          variant="secondary"
-          onPress={() => {
-            store.nextReveal();
-          }} 
-          style={{ marginTop: theme.spacing.xl }}
-        />
+          {/* BACK (REVEALED) */}
+          <Animated.View style={[styles.cardSide, backAnimatedStyle]}>
+            <View style={[styles.cardInner, { borderColor: glowColor, backgroundColor: 'rgba(20,25,35,0.95)' }]}>
+              {isImpostor ? (
+                <>
+                  <View style={[styles.iconCircle, { backgroundColor: 'rgba(244, 63, 94, 0.1)' }]}>
+                    <ShieldAlert size={48} color={theme.colors.danger} />
+                  </View>
+                  <Typography variant="h2" bold color={theme.colors.danger} style={{ marginTop: theme.spacing.xl, marginBottom: 8, textAlign: 'center' }}>
+                    VOCÊ É O IMPOSTOR
+                  </Typography>
+                  <Typography variant="label" color={theme.colors.textSecondary} style={{ textAlign: 'center', marginBottom: 4 }}>
+                    SUA DICA
+                  </Typography>
+                  <Typography variant="h3" bold style={{ textAlign: 'center', fontStyle: 'italic' }}>
+                    "{store.word?.impostorHint}"
+                  </Typography>
+                </>
+              ) : (
+                <>
+                  <View style={[styles.iconCircle, { backgroundColor: 'rgba(6, 182, 212, 0.1)' }]}>
+                    <ShieldQuestion size={48} color={theme.colors.secondary} />
+                  </View>
+                  <Typography variant="h2" bold color={theme.colors.secondary} style={{ marginTop: theme.spacing.xl, marginBottom: 8, textAlign: 'center' }}>
+                    VOCÊ É CIDADÃO
+                  </Typography>
+                  <Typography variant="label" color={theme.colors.textSecondary} style={{ textAlign: 'center', marginBottom: 4 }}>
+                    SUA PALAVRA É
+                  </Typography>
+                  <Typography variant="display" bold style={{ textAlign: 'center' }}>
+                    {store.word?.value.toUpperCase()}
+                  </Typography>
+                </>
+              )}
+            </View>
+          </Animated.View>
+
+        </Pressable>
+      </View>
+
+      {/* FOOTER ACTION */}
+      <View style={styles.footer}>
+        {isRevealed ? (
+          <View style={{ width: '100%' }}>
+            <Button
+              title="Ocultar e Passar →"
+              variant="primary"
+              onPress={handleHideAndPass}
+            />
+            <Typography variant="caption" color={theme.colors.textSecondary} style={{ textAlign: 'center', marginTop: 12 }}>
+              Ao passar, sua identidade será ocultada imediatamente.
+            </Typography>
+          </View>
+        ) : (
+          <View style={{ height: 60 }} />
+        )}
       </View>
     </View>
   );
@@ -148,35 +191,90 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    justifyContent: 'center',
-    padding: theme.spacing.margin,
+    paddingHorizontal: theme.spacing.margin,
   },
-  content: {
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: theme.spacing.xl,
+  },
+  headerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerItemDark: {
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  turnIndicator: {
+    alignItems: 'center',
+    marginBottom: theme.spacing.lg,
+  },
+  privacyBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(244, 63, 94, 0.05)',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: theme.spacing.xl,
+    borderWidth: 1,
+    borderColor: 'rgba(244, 63, 94, 0.1)',
+  },
+  cardWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardPressable: {
     width: '100%',
+    height: '80%',
+    maxHeight: 450,
   },
-  pressableArea: {
+  cardSide: {
+    flex: 1,
     width: '100%',
-    alignItems: 'center',
+    height: '100%',
   },
-  cardContainer: {
-    width: '100%',
-  },
-  card: {
-    height: 320,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: theme.spacing.xl,
-  },
-  placeholder: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  secretContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: theme.spacing.xl,
-    backgroundColor: theme.colors.surfaceModal,
+  cardInner: {
+    flex: 1,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.borderRadius.xl,
+    borderWidth: 1,
+    padding: theme.spacing.xl,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 0.5,
+    shadowRadius: 32,
+    elevation: 10,
+  },
+  hiddenCardBadge: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  iconCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: 'rgba(124, 58, 237, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  footer: {
+    minHeight: 80,
+    justifyContent: 'center',
   }
 });

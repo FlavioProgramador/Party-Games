@@ -17,7 +17,6 @@ export function RoundScreen() {
   const endTime = selectRoundEndTime(store);
   
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
-  const [selectedPlayerForHint, setSelectedPlayerForHint] = useState<string | null>(null);
 
   useEffect(() => {
     if (!endTime) return;
@@ -50,56 +49,7 @@ export function RoundScreen() {
     return () => clearInterval(intervalId);
   }, [endTime]);
 
-  if (selectedPlayerForHint) {
-    const isImpostor = selectedPlayerForHint === store.impostorId;
-    const player = store.players.find(p => p.id === selectedPlayerForHint);
-    
-    return (
-      <View style={[styles.container, { paddingTop: Math.max(insets.top + 40, 60), paddingBottom: Math.max(insets.bottom + 40, 40) }]}>
-        <View style={styles.content}>
-          <Typography variant="label" color={theme.colors.textSecondary} style={{ marginBottom: theme.spacing.xl, letterSpacing: 2 }}>
-            INFORMAÇÃO SECRETA
-          </Typography>
-          
-          <Typography variant="h3" bold style={{ marginBottom: theme.spacing.xl }}>
-            {player?.name.toUpperCase()}
-          </Typography>
-          
-          <Card variant="modal" style={{ padding: theme.spacing.xl, alignItems: 'center', borderColor: isImpostor ? theme.colors.danger : theme.colors.secondary }}>
-            {isImpostor ? (
-              <>
-                <Typography variant="h2" bold color={theme.colors.danger} style={{ marginBottom: theme.spacing.lg }}>
-                  VOCÊ É O IMPOSTOR
-                </Typography>
-                <Typography variant="label" color={theme.colors.textSecondary} style={{ marginBottom: theme.spacing.sm }}>
-                  Sua Dica:
-                </Typography>
-                <Typography variant="h3" bold style={{ fontStyle: 'italic', textAlign: 'center' }}>
-                  "{store.word?.impostorHint}"
-                </Typography>
-              </>
-            ) : (
-              <>
-                <Typography variant="label" color={theme.colors.textSecondary} style={{ marginBottom: theme.spacing.md }}>
-                  Sua palavra é:
-                </Typography>
-                <Typography variant="display" bold color={theme.colors.secondary} style={{ textAlign: 'center' }}>
-                  {store.word?.value.toUpperCase()}
-                </Typography>
-              </>
-            )}
-          </Card>
-          
-          <Button 
-            title="VOLTAR PARA A RODADA"
-            variant="secondary" 
-            onPress={() => setSelectedPlayerForHint(null)} 
-            style={{ marginTop: theme.spacing.xxl }}
-          />
-        </View>
-      </View>
-    );
-  }
+
 
   const durationSeconds = store.settings.timeLimit || 60; // Fallback se tempo for infinito
 
@@ -142,13 +92,6 @@ export function RoundScreen() {
                   <Typography variant="h3" bold>
                     {index + 1}. {player?.name}
                   </Typography>
-                  <Button 
-                    title="Lembrar" 
-                    variant="ghost" 
-                    size="sm"
-                    fullWidth={false}
-                    onPress={() => setSelectedPlayerForHint(playerId)} 
-                  />
                 </View>
               );
             })}

@@ -5,6 +5,9 @@ export interface GameModule {
   minPlayers: number;
   maxPlayers: number;
   available: boolean;
+  category?: string;
+  duration?: string;
+  image?: any;
 }
 
 export const GAME_REGISTRY: GameModule[] = [
@@ -15,6 +18,9 @@ export const GAME_REGISTRY: GameModule[] = [
     minPlayers: 3,
     maxPlayers: 10,
     available: true,
+    category: 'Dedução Social',
+    duration: '~10 min',
+    image: require('../../assets/images/impostor-bg.jpg'),
   },
   {
     id: 'eu_duvido',
@@ -23,6 +29,7 @@ export const GAME_REGISTRY: GameModule[] = [
     minPlayers: 3,
     maxPlayers: 10,
     available: false,
+    category: 'Blefe',
   },
   {
     id: 'quem_e_mais',
