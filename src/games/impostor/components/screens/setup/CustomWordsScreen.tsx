@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
+import { Typography } from '@/components/Typography';
+import { hapticsService } from '@/core/haptics/hapticsService';
+import { SettingsScreenLayout } from '@/games/impostor/components/shared/SettingsScreenLayout';
+import { CATEGORIES } from '@/games/impostor/data/wordBank';
+import { useCustomWordsStore, validateCustomWord } from '@/games/impostor/store/useCustomWordsStore';
+import { theme } from '@/theme';
+import { useRouter } from 'expo-router';
+import { AlertCircle, Sparkles, Tag, Trash2 } from 'lucide-react-native';
+import { useState } from 'react';
 import {
-  View,
+  Alert,
+  ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  ScrollView,
-  Alert,
+  View,
 } from 'react-native';
-import { Plus, Trash2, Sparkles, AlertCircle, Check, Tag } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
-import { Typography } from '@/components/Typography';
-import { Button } from '@/components/Button';
-import { Card } from '@/components/Card';
-import { SettingsScreenLayout } from '@/games/impostor/components/shared/SettingsScreenLayout';
-import { useCustomWordsStore, validateCustomWord } from '@/games/impostor/store/useCustomWordsStore';
-import { CATEGORIES } from '@/games/impostor/data/wordBank';
-import { theme } from '@/theme';
-import { hapticsService } from '@/core/haptics/hapticsService';
 
 const AVAILABLE_CATEGORIES = CATEGORIES.filter(c => c.id !== 'all');
 
