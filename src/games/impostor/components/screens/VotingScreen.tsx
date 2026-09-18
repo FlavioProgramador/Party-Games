@@ -11,6 +11,7 @@ import { ChevronLeft, X, ShieldAlert, Check, Vote, Users } from 'lucide-react-na
 import { Typography } from '@/components/Typography';
 import { Button } from '@/components/Button';
 import { PlayerAvatar } from '../shared/PlayerAvatar';
+import { QuitGameModal } from '../shared/QuitGameModal';
 import { theme } from '@/theme';
 import { useImpostorStore } from '../../store/useImpostorStore';
 import { hapticsService } from '@/core/haptics/hapticsService';
@@ -40,9 +41,15 @@ function GroupVotingScreen() {
   const store = useImpostorStore();
   const insets = useSafeAreaInsets();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isQuitModalVisible, setIsQuitModalVisible] = useState(false);
 
   // Maximum impostors that can be selected (based on actual impostor count in match)
   const maxImpostors = Math.max(1, store.impostorIds.length);
+
+  const handleBackToRound = () => {
+    hapticsService.triggerSelection();
+    store.returnToRound();
+  };
 
   const handleTogglePlayer = (playerId: string) => {
     hapticsService.triggerSelection();
@@ -75,7 +82,7 @@ function GroupVotingScreen() {
       <View style={[styles.groupHeader, { paddingTop: Math.max(insets.top + 10, 22) }]}>
         <TouchableOpacity
           style={styles.circularHeaderBtn}
-          onPress={() => store.resetToMenu()}
+          onPress={handleBackToRound}
           activeOpacity={0.7}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
@@ -88,7 +95,10 @@ function GroupVotingScreen() {
 
         <TouchableOpacity
           style={styles.circularHeaderBtn}
-          onPress={() => store.resetToMenu()}
+          onPress={() => {
+            hapticsService.triggerImpact();
+            setIsQuitModalVisible(true);
+          }}
           activeOpacity={0.7}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
@@ -206,6 +216,16 @@ function GroupVotingScreen() {
           onPress={handleConfirm}
         />
       </View>
+
+      <QuitGameModal
+        visible={isQuitModalVisible}
+        onClose={() => setIsQuitModalVisible(false)}
+        onConfirmQuit={() => {
+          setIsQuitModalVisible(false);
+          hapticsService.triggerImpact();
+          store.resetToMenu();
+        }}
+      />
     </View>
   );
 }
@@ -218,6 +238,7 @@ function IndividualVotingScreen() {
   const insets = useSafeAreaInsets();
   const [step, setStep] = useState<'pass' | 'vote'>('pass');
   const [selectedVote, setSelectedVote] = useState<string | null>(null);
+  const [isQuitModalVisible, setIsQuitModalVisible] = useState(false);
 
   // Find the current voter who hasn't voted yet
   const currentVoterId = store.playOrder.find(id => !store.votes[id]);
@@ -244,6 +265,43 @@ function IndividualVotingScreen() {
   if (step === 'pass') {
     return (
       <View style={[styles.container, styles.centerContent]}>
+        <View
+          style={[
+            styles.individualPassHeader,
+            {
+              paddingTop: Math.max(insets.top + 10, 22),
+            },
+          ]}
+        >
+          {votesCast === 0 ? (
+            <TouchableOpacity
+              style={styles.circularHeaderBtn}
+              onPress={() => {
+                hapticsService.triggerSelection();
+                store.returnToRound();
+              }}
+              activeOpacity={0.7}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <ChevronLeft color="#FFFFFF" size={22} />
+            </TouchableOpacity>
+          ) : (
+            <View style={{ width: 44 }} />
+          )}
+
+          <TouchableOpacity
+            style={styles.circularHeaderBtn}
+            onPress={() => {
+              hapticsService.triggerImpact();
+              setIsQuitModalVisible(true);
+            }}
+            activeOpacity={0.7}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <X color={theme.colors.textSecondary} size={20} />
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.passBox}>
           <View style={styles.badgePass}>
             <Typography variant="caption" bold style={{ color: '#F59E0B', letterSpacing: 1.5 }}>
@@ -278,6 +336,16 @@ function IndividualVotingScreen() {
             }}
           />
         </View>
+
+        <QuitGameModal
+          visible={isQuitModalVisible}
+          onClose={() => setIsQuitModalVisible(false)}
+          onConfirmQuit={() => {
+            setIsQuitModalVisible(false);
+            hapticsService.triggerImpact();
+            store.resetToMenu();
+          }}
+        />
       </View>
     );
   }
@@ -315,7 +383,10 @@ function IndividualVotingScreen() {
 
         <TouchableOpacity
           style={styles.headerBtn}
-          onPress={() => store.resetToMenu()}
+          onPress={() => {
+            hapticsService.triggerImpact();
+            setIsQuitModalVisible(true);
+          }}
           activeOpacity={0.7}
         >
           <X color={theme.colors.textSecondary} size={20} />
@@ -404,6 +475,16 @@ function IndividualVotingScreen() {
           onPress={handleConfirmVote}
         />
       </View>
+
+      <QuitGameModal
+        visible={isQuitModalVisible}
+        onClose={() => setIsQuitModalVisible(false)}
+        onConfirmQuit={() => {
+          setIsQuitModalVisible(false);
+          hapticsService.triggerImpact();
+          store.resetToMenu();
+        }}
+      />
     </View>
   );
 }
@@ -415,6 +496,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0A0E1A',
+  },
+  individualPassHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    zIndex: 10,
   },
 
   // ─── ESTILOS DA VOTAÇÃO EM GRUPO ───
