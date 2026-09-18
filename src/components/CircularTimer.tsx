@@ -12,13 +12,15 @@ interface CircularTimerProps {
   strokeWidth?: number;
   durationSeconds: number;
   remainingSeconds: number;
+  children?: React.ReactNode;
 }
 
 export function CircularTimer({ 
   size = 200, 
   strokeWidth = 8, 
   durationSeconds, 
-  remainingSeconds 
+  remainingSeconds,
+  children,
 }: CircularTimerProps) {
   
   const radius = (size - strokeWidth) / 2;
@@ -72,13 +74,15 @@ export function CircularTimer({
         />
       </Svg>
       <View style={styles.centerContainer}>
-        <Typography 
-          variant="timer" 
-          color={isDanger ? theme.colors.danger : theme.colors.text} 
-          style={{ fontVariant: ['tabular-nums'] }}
-        >
-          {formatTime(Math.max(0, remainingSeconds))}
-        </Typography>
+        {children ?? (
+          <Typography 
+            variant="timer" 
+            color={isDanger ? theme.colors.danger : theme.colors.text} 
+            style={{ fontVariant: ['tabular-nums'] }}
+          >
+            {formatTime(Math.max(0, remainingSeconds))}
+          </Typography>
+        )}
       </View>
     </View>
   );
