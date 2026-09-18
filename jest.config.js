@@ -7,5 +7,9 @@ module.exports = {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
       tsconfig: 'tsconfig.json'
     }]
-  }
+  },
+  moduleNameMapper: {
+    '^@react-native-async-storage/async-storage$':
+      '@react-native-async-storage/async-storage/jest/async-storage-mock',
+  },
 };

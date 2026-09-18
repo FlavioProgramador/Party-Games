@@ -484,6 +484,165 @@ export const WORD_BANK: Word[] = [
   { id: 'profissoes_hard_14', value: 'Cartógrafo', category: 'profissoes', difficulty: 'hard', impostorHint: 'Mapas' },
   { id: 'profissoes_hard_15', value: 'Perito', category: 'profissoes', difficulty: 'hard', impostorHint: 'Evidências' },
 
+  // ============================================================
+  // NOVAS CATEGORIAS EXPANDIDAS
+  // ============================================================
+
+  // --- memes_brasileiros (easy) ---
+  { id: 'memes_easy_1', value: 'Caneta Azul', category: 'memes_brasileiros', difficulty: 'easy', impostorHint: 'Manoel' },
+  { id: 'memes_easy_2', value: 'Bora Bill', category: 'memes_brasileiros', difficulty: 'easy', impostorHint: 'Ceará' },
+  { id: 'memes_easy_3', value: 'Grávida de Taubaté', category: 'memes_brasileiros', difficulty: 'easy', impostorHint: 'Barriga' },
+  { id: 'memes_easy_4', value: 'Luva de Pedreiro', category: 'memes_brasileiros', difficulty: 'easy', impostorHint: 'Receba' },
+  { id: 'memes_easy_5', value: 'Nazaré Confusa', category: 'memes_brasileiros', difficulty: 'easy', impostorHint: 'Cálculos' },
+  { id: 'memes_easy_6', value: 'Casimiro', category: 'memes_brasileiros', difficulty: 'easy', impostorHint: 'Reações' },
+  { id: 'memes_easy_7', value: 'É Verdade Esse Bilete', category: 'memes_brasileiros', difficulty: 'easy', impostorHint: 'Bilhete' },
+  { id: 'memes_easy_8', value: 'Calma Calabreso', category: 'memes_brasileiros', difficulty: 'easy', impostorHint: 'Apelido' },
+  { id: 'memes_easy_9', value: 'Choque de Cultura', category: 'memes_brasileiros', difficulty: 'easy', impostorHint: 'Transporte' },
+  { id: 'memes_easy_10', value: 'Morre Diabo', category: 'memes_brasileiros', difficulty: 'easy', impostorHint: 'Entrevista' },
+
+  // --- memes_brasileiros (medium) ---
+  { id: 'memes_medium_1', value: 'Cringe', category: 'memes_brasileiros', difficulty: 'medium', impostorHint: 'Vergonha' },
+  { id: 'memes_medium_2', value: 'TravaZap', category: 'memes_brasileiros', difficulty: 'medium', impostorHint: 'Bloqueio' },
+  { id: 'memes_medium_3', value: 'Ema da Alvorada', category: 'memes_brasileiros', difficulty: 'medium', impostorHint: 'Bicada' },
+  { id: 'memes_medium_4', value: 'Galo Cego', category: 'memes_brasileiros', difficulty: 'medium', impostorHint: 'Venda' },
+  { id: 'memes_medium_5', value: 'Rei do Camarote', category: 'memes_brasileiros', difficulty: 'medium', impostorHint: 'Champanhe' },
+  { id: 'memes_medium_6', value: 'Joel Santana', category: 'memes_brasileiros', difficulty: 'medium', impostorHint: 'Prancheta' },
+  { id: 'memes_medium_7', value: 'Forninho', category: 'memes_brasileiros', difficulty: 'medium', impostorHint: 'Desabamento' },
+  { id: 'memes_medium_8', value: 'Whindersson', category: 'memes_brasileiros', difficulty: 'medium', impostorHint: 'Piauí' },
+  { id: 'memes_medium_9', value: 'Padre do Balão', category: 'memes_brasileiros', difficulty: 'medium', impostorHint: 'Céu' },
+  { id: 'memes_medium_10', value: 'Sanduíche-iche', category: 'memes_brasileiros', difficulty: 'medium', impostorHint: 'Nutrição' },
+
+  // --- memes_brasileiros (hard) ---
+  { id: 'memes_hard_1', value: 'Nissim Ourfali', category: 'memes_brasileiros', difficulty: 'hard', impostorHint: 'Baleia' },
+  { id: 'memes_hard_2', value: 'Menino do Acre', category: 'memes_brasileiros', difficulty: 'hard', impostorHint: 'Criptografia' },
+  { id: 'memes_hard_3', value: 'Tulla Luana', category: 'memes_brasileiros', difficulty: 'hard', impostorHint: 'Confeiteira' },
+  { id: 'memes_hard_4', value: 'Betina', category: 'memes_brasileiros', difficulty: 'hard', impostorHint: 'Patrimônio' },
+  { id: 'memes_hard_5', value: 'Pintinho Piu', category: 'memes_brasileiros', difficulty: 'hard', impostorHint: 'Trator' },
+
+  // --- cultura_brasileira (easy) ---
+  { id: 'cultura_easy_1', value: 'Carnaval', category: 'cultura_brasileira', difficulty: 'easy', impostorHint: 'Fantasia' },
+  { id: 'cultura_easy_2', value: 'Saci-Pererê', category: 'cultura_brasileira', difficulty: 'easy', impostorHint: 'Redemoinho' },
+  { id: 'cultura_easy_3', value: 'Festa Junina', category: 'cultura_brasileira', difficulty: 'easy', impostorHint: 'Fogueira' },
+  { id: 'cultura_easy_4', value: 'Capoeira', category: 'cultura_brasileira', difficulty: 'easy', impostorHint: 'Berimbau' },
+  { id: 'cultura_easy_5', value: 'Caipirinha', category: 'cultura_brasileira', difficulty: 'easy', impostorHint: 'Limão' },
+  { id: 'cultura_easy_6', value: 'Pão de Queijo', category: 'cultura_brasileira', difficulty: 'easy', impostorHint: 'Minas' },
+  { id: 'cultura_easy_7', value: 'Cristo Redentor', category: 'cultura_brasileira', difficulty: 'easy', impostorHint: 'Corcovado' },
+  { id: 'cultura_easy_8', value: 'Cuca', category: 'cultura_brasileira', difficulty: 'easy', impostorHint: 'Jacaré' },
+  { id: 'cultura_easy_9', value: 'Samba', category: 'cultura_brasileira', difficulty: 'easy', impostorHint: 'Pandeiro' },
+  { id: 'cultura_easy_10', value: 'Brigadeiro', category: 'cultura_brasileira', difficulty: 'easy', impostorHint: 'Granulado' },
+
+  // --- cultura_brasileira (medium) ---
+  { id: 'cultura_medium_1', value: 'Frevo', category: 'cultura_brasileira', difficulty: 'medium', impostorHint: 'Sombrinha' },
+  { id: 'cultura_medium_2', value: 'Bumba Meu Boi', category: 'cultura_brasileira', difficulty: 'medium', impostorHint: 'Maranhão' },
+  { id: 'cultura_medium_3', value: 'Curupira', category: 'cultura_brasileira', difficulty: 'medium', impostorHint: 'Pegadas' },
+  { id: 'cultura_medium_4', value: 'Iemanjá', category: 'cultura_brasileira', difficulty: 'medium', impostorHint: 'Flores' },
+  { id: 'cultura_medium_5', value: 'Acarajé', category: 'cultura_brasileira', difficulty: 'medium', impostorHint: 'Dendê' },
+  { id: 'cultura_medium_6', value: 'Maracatu', category: 'cultura_brasileira', difficulty: 'medium', impostorHint: 'Tambor' },
+  { id: 'cultura_medium_7', value: 'Baião', category: 'cultura_brasileira', difficulty: 'medium', impostorHint: 'Sanfona' },
+  { id: 'cultura_medium_8', value: 'Cordel', category: 'cultura_brasileira', difficulty: 'medium', impostorHint: 'Xilogravura' },
+  { id: 'cultura_medium_9', value: 'Chimarrão', category: 'cultura_brasileira', difficulty: 'medium', impostorHint: 'Cuia' },
+  { id: 'cultura_medium_10', value: 'Forró', category: 'cultura_brasileira', difficulty: 'medium', impostorHint: 'Triângulo' },
+
+  // --- cultura_brasileira (hard) ---
+  { id: 'cultura_hard_1', value: 'Boitatá', category: 'cultura_brasileira', difficulty: 'hard', impostorHint: 'Serpente' },
+  { id: 'cultura_hard_2', value: 'Carimbó', category: 'cultura_brasileira', difficulty: 'hard', impostorHint: 'Pará' },
+  { id: 'cultura_hard_3', value: 'Maculelê', category: 'cultura_brasileira', difficulty: 'hard', impostorHint: 'Bastões' },
+  { id: 'cultura_hard_4', value: 'Jongo', category: 'cultura_brasileira', difficulty: 'hard', impostorHint: 'Terreiro' },
+  { id: 'cultura_hard_5', value: 'Congada', category: 'cultura_brasileira', difficulty: 'hard', impostorHint: 'Coroação' },
+
+  // --- personagens (easy) ---
+  { id: 'personagens_easy_1', value: 'Batman', category: 'personagens', difficulty: 'easy', impostorHint: 'Morcego' },
+  { id: 'personagens_easy_2', value: 'Homem-Aranha', category: 'personagens', difficulty: 'easy', impostorHint: 'Teia' },
+  { id: 'personagens_easy_3', value: 'Harry Potter', category: 'personagens', difficulty: 'easy', impostorHint: 'Cicatriz' },
+  { id: 'personagens_easy_4', value: 'Mônica', category: 'personagens', difficulty: 'easy', impostorHint: 'Sansão' },
+  { id: 'personagens_easy_5', value: 'Shrek', category: 'personagens', difficulty: 'easy', impostorHint: 'Pântano' },
+  { id: 'personagens_easy_6', value: 'Pikachu', category: 'personagens', difficulty: 'easy', impostorHint: 'Trovão' },
+  { id: 'personagens_easy_7', value: 'Darth Vader', category: 'personagens', difficulty: 'easy', impostorHint: 'Respiração' },
+  { id: 'personagens_easy_8', value: 'Super Mario', category: 'personagens', difficulty: 'easy', impostorHint: 'Encanador' },
+  { id: 'personagens_easy_9', value: 'Bob Esponja', category: 'personagens', difficulty: 'easy', impostorHint: 'Hambúrguer' },
+  { id: 'personagens_easy_10', value: 'Capitão América', category: 'personagens', difficulty: 'easy', impostorHint: 'Escudo' },
+
+  // --- personagens (medium) ---
+  { id: 'personagens_medium_1', value: 'Cebolinha', category: 'personagens', difficulty: 'medium', impostorHint: 'Trocas' },
+  { id: 'personagens_medium_2', value: 'Gandalf', category: 'personagens', difficulty: 'medium', impostorHint: 'Cajado' },
+  { id: 'personagens_medium_3', value: 'Sherlock Holmes', category: 'personagens', difficulty: 'medium', impostorHint: 'Cachimbo' },
+  { id: 'personagens_medium_4', value: 'Chaves', category: 'personagens', difficulty: 'medium', impostorHint: 'Barril' },
+  { id: 'personagens_medium_5', value: 'Coringa', category: 'personagens', difficulty: 'medium', impostorHint: 'Risada' },
+  { id: 'personagens_medium_6', value: 'Tarzan', category: 'personagens', difficulty: 'medium', impostorHint: 'Selva' },
+  { id: 'personagens_medium_7', value: 'Robin Hood', category: 'personagens', difficulty: 'medium', impostorHint: 'Arco' },
+  { id: 'personagens_medium_8', value: 'Wolverine', category: 'personagens', difficulty: 'medium', impostorHint: 'Garras' },
+  { id: 'personagens_medium_9', value: 'Buzz Lightyear', category: 'personagens', difficulty: 'medium', impostorHint: 'Espaço' },
+  { id: 'personagens_medium_10', value: 'Goku', category: 'personagens', difficulty: 'medium', impostorHint: 'Cauda' },
+
+  // --- personagens (hard) ---
+  { id: 'personagens_hard_1', value: 'Dom Quixote', category: 'personagens', difficulty: 'hard', impostorHint: 'Moinhos' },
+  { id: 'personagens_hard_2', value: 'Capitão Gancho', category: 'personagens', difficulty: 'hard', impostorHint: 'Crocodilo' },
+  { id: 'personagens_hard_3', value: 'Severus Snape', category: 'personagens', difficulty: 'hard', impostorHint: 'Poções' },
+  { id: 'personagens_hard_4', value: 'Sauron', category: 'personagens', difficulty: 'hard', impostorHint: 'Anel' },
+  { id: 'personagens_hard_5', value: 'Frankenstein', category: 'personagens', difficulty: 'hard', impostorHint: 'Laboratório' },
+
+  // --- marcas (easy) ---
+  { id: 'marcas_easy_1', value: 'Coca-Cola', category: 'marcas', difficulty: 'easy', impostorHint: 'Refrigerante' },
+  { id: 'marcas_easy_2', value: "McDonald's", category: 'marcas', difficulty: 'easy', impostorHint: 'Palhaço' },
+  { id: 'marcas_easy_3', value: 'Apple', category: 'marcas', difficulty: 'easy', impostorHint: 'Maçã' },
+  { id: 'marcas_easy_4', value: 'Nike', category: 'marcas', difficulty: 'easy', impostorHint: 'Tênis' },
+  { id: 'marcas_easy_5', value: 'Netflix', category: 'marcas', difficulty: 'easy', impostorHint: 'Streaming' },
+  { id: 'marcas_easy_6', value: 'Google', category: 'marcas', difficulty: 'easy', impostorHint: 'Pesquisa' },
+  { id: 'marcas_easy_7', value: 'Ferrari', category: 'marcas', difficulty: 'easy', impostorHint: 'Cavalinho' },
+  { id: 'marcas_easy_8', value: 'Disney', category: 'marcas', difficulty: 'easy', impostorHint: 'Castelo' },
+  { id: 'marcas_easy_9', value: 'Havaianas', category: 'marcas', difficulty: 'easy', impostorHint: 'Borracha' },
+  { id: 'marcas_easy_10', value: 'Nubank', category: 'marcas', difficulty: 'easy', impostorHint: 'Roxo' },
+
+  // --- marcas (medium) ---
+  { id: 'marcas_medium_1', value: 'Lego', category: 'marcas', difficulty: 'medium', impostorHint: 'Encaixe' },
+  { id: 'marcas_medium_2', value: 'Guaraná Antarctica', category: 'marcas', difficulty: 'medium', impostorHint: 'Amazônia' },
+  { id: 'marcas_medium_3', value: 'Spotify', category: 'marcas', difficulty: 'medium', impostorHint: 'Playlists' },
+  { id: 'marcas_medium_4', value: 'PlayStation', category: 'marcas', difficulty: 'medium', impostorHint: 'Controle' },
+  { id: 'marcas_medium_5', value: 'Starbucks', category: 'marcas', difficulty: 'medium', impostorHint: 'Café' },
+  { id: 'marcas_medium_6', value: 'Red Bull', category: 'marcas', difficulty: 'medium', impostorHint: 'Energético' },
+  { id: 'marcas_medium_7', value: 'Rolex', category: 'marcas', difficulty: 'medium', impostorHint: 'Relógio' },
+  { id: 'marcas_medium_8', value: 'Subway', category: 'marcas', difficulty: 'medium', impostorHint: 'Sanduíche' },
+  { id: 'marcas_medium_9', value: 'Uber', category: 'marcas', difficulty: 'medium', impostorHint: 'Motorista' },
+  { id: 'marcas_medium_10', value: 'Nintendo', category: 'marcas', difficulty: 'medium', impostorHint: 'Console' },
+
+  // --- marcas (hard) ---
+  { id: 'marcas_hard_1', value: 'Lamborghini', category: 'marcas', difficulty: 'hard', impostorHint: 'Touro' },
+  { id: 'marcas_hard_2', value: 'Chanel', category: 'marcas', difficulty: 'hard', impostorHint: 'Perfume' },
+  { id: 'marcas_hard_3', value: 'Harley-Davidson', category: 'marcas', difficulty: 'hard', impostorHint: 'Motocicleta' },
+  { id: 'marcas_hard_4', value: 'Swarovski', category: 'marcas', difficulty: 'hard', impostorHint: 'Cristais' },
+  { id: 'marcas_hard_5', value: 'Pringles', category: 'marcas', difficulty: 'hard', impostorHint: 'Tubos' },
+
+  // --- tecnologia (easy) ---
+  { id: 'tecnologia_easy_1', value: 'WhatsApp', category: 'tecnologia', difficulty: 'easy', impostorHint: 'Mensagens' },
+  { id: 'tecnologia_easy_2', value: 'Instagram', category: 'tecnologia', difficulty: 'easy', impostorHint: 'Fotos' },
+  { id: 'tecnologia_easy_3', value: 'YouTube', category: 'tecnologia', difficulty: 'easy', impostorHint: 'Vídeos' },
+  { id: 'tecnologia_easy_4', value: 'Wi-Fi', category: 'tecnologia', difficulty: 'easy', impostorHint: 'Roteador' },
+  { id: 'tecnologia_easy_5', value: 'Bluetooth', category: 'tecnologia', difficulty: 'easy', impostorHint: 'Pareamento' },
+  { id: 'tecnologia_easy_6', value: 'Drone', category: 'tecnologia', difficulty: 'easy', impostorHint: 'Hélices' },
+  { id: 'tecnologia_easy_7', value: 'Robô', category: 'tecnologia', difficulty: 'easy', impostorHint: 'Mecânica' },
+  { id: 'tecnologia_easy_8', value: 'Satélite', category: 'tecnologia', difficulty: 'easy', impostorHint: 'Órbita' },
+  { id: 'tecnologia_easy_9', value: 'Smartwatch', category: 'tecnologia', difficulty: 'easy', impostorHint: 'Pulso' },
+  { id: 'tecnologia_easy_10', value: 'Tablet', category: 'tecnologia', difficulty: 'easy', impostorHint: 'Tela' },
+
+  // --- tecnologia (medium) ---
+  { id: 'tecnologia_medium_1', value: 'Inteligência Artificial', category: 'tecnologia', difficulty: 'medium', impostorHint: 'Algoritmo' },
+  { id: 'tecnologia_medium_2', value: 'Pix', category: 'tecnologia', difficulty: 'medium', impostorHint: 'Chave' },
+  { id: 'tecnologia_medium_3', value: 'TikTok', category: 'tecnologia', difficulty: 'medium', impostorHint: 'Rolagem' },
+  { id: 'tecnologia_medium_4', value: 'Antivírus', category: 'tecnologia', difficulty: 'medium', impostorHint: 'Escaneamento' },
+  { id: 'tecnologia_medium_5', value: 'Nuvem', category: 'tecnologia', difficulty: 'medium', impostorHint: 'Servidor' },
+  { id: 'tecnologia_medium_6', value: 'Fone sem Fio', category: 'tecnologia', difficulty: 'medium', impostorHint: 'Estojo' },
+  { id: 'tecnologia_medium_7', value: 'Impressora 3D', category: 'tecnologia', difficulty: 'medium', impostorHint: 'Filamento' },
+  { id: 'tecnologia_medium_8', value: 'Criptomoeda', category: 'tecnologia', difficulty: 'medium', impostorHint: 'Carteira' },
+  { id: 'tecnologia_medium_9', value: 'Realidade Virtual', category: 'tecnologia', difficulty: 'medium', impostorHint: 'Imersão' },
+  { id: 'tecnologia_medium_10', value: 'GPS', category: 'tecnologia', difficulty: 'medium', impostorHint: 'Navegação' },
+
+  // --- tecnologia (hard) ---
+  { id: 'tecnologia_hard_1', value: 'Computador Quântico', category: 'tecnologia', difficulty: 'hard', impostorHint: 'Qubits' },
+  { id: 'tecnologia_hard_2', value: 'Fibra Óptica', category: 'tecnologia', difficulty: 'hard', impostorHint: 'Velocidade' },
+  { id: 'tecnologia_hard_3', value: 'Metaverso', category: 'tecnologia', difficulty: 'hard', impostorHint: 'Avatares' },
+  { id: 'tecnologia_hard_4', value: 'Microchip', category: 'tecnologia', difficulty: 'hard', impostorHint: 'Silício' },
+  { id: 'tecnologia_hard_5', value: 'Firewall', category: 'tecnologia', difficulty: 'hard', impostorHint: 'Segurança' },
+
 ]; 
 
 export const CATEGORIES = [
@@ -497,5 +656,11 @@ export const CATEGORIES = [
   { id: 'musica', name: 'Música' },
   { id: 'cotidiano', name: 'Cotidiano' },
   { id: 'objetos', name: 'Objetos' },
-  { id: 'profissoes', name: 'Profissões' }
+  { id: 'profissoes', name: 'Profissões' },
+  { id: 'memes_brasileiros', name: 'Memes Brasileiros' },
+  { id: 'cultura_brasileira', name: 'Cultura Brasileira' },
+  { id: 'personagens', name: 'Personagens' },
+  { id: 'marcas', name: 'Marcas Famosas' },
+  { id: 'tecnologia', name: 'Tecnologia' },
+  { id: 'personalizadas', name: 'Personalizadas' },
 ];

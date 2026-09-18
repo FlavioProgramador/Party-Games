@@ -5,6 +5,7 @@ import { ImpostorGameState, createInitialState } from '../engine/gameState';
 import { createEngine } from '../engine/gameEngine';
 import { Player, GameSettings } from '../types';
 import { WORD_BANK } from '../data/wordBank';
+import { useCustomWordsStore } from './useCustomWordsStore';
 
 const STORE_VERSION = 2; // Bump this to reset persisted data on schema changes
 
@@ -52,7 +53,11 @@ export const useImpostorStore = create<ImpostorStore>()(
       
       updateSettings: (settings) => set(state => engine.updateSettings(state, settings)),
       
-      startGame: () => set(state => engine.startGame(state, WORD_BANK)),
+      startGame: () => set(state => {
+        const customWords = useCustomWordsStore.getState().customWords || [];
+        const wordsPool = customWords.length > 0 ? [...WORD_BANK, ...customWords] : WORD_BANK;
+        return engine.startGame(state, wordsPool);
+      }),
       
       startReveal: () => set(state => engine.startReveal(state)),
       

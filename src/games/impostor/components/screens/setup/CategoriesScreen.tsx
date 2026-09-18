@@ -4,6 +4,7 @@ import {
   Layers,
   Sparkles,
   CheckCheck,
+  ChevronRight,
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { Typography } from '@/components/Typography';
@@ -25,6 +26,12 @@ const CATEGORY_META: Record<string, { iconText: string; desc: string; color: str
   cotidiano: { iconText: '☀️', desc: 'Situações diárias, rotinas e tarefas da vida real', color: '#EAB308' },
   objetos: { iconText: '📦', desc: 'Itens de casa, ferramentas, tecnologias e utensílios', color: '#F97316' },
   profissoes: { iconText: '💼', desc: 'Carreiras, ocupações tradicionais e modernas', color: '#3B82F6' },
+  memes_brasileiros: { iconText: '🤣', desc: 'Memes icônicos, virais e frases da internet brasileira', color: '#F43F5E' },
+  cultura_brasileira: { iconText: '🇧🇷', desc: 'Folclore, celebrações, tradições e brasilidades', color: '#10B981' },
+  personagens: { iconText: '🦸', desc: 'Heróis, vilões, desenhos e ícones da ficção', color: '#A855F7' },
+  marcas: { iconText: '🏷️', desc: 'Marcas famosas, produtos e logos conhecidos', color: '#EC4899' },
+  tecnologia: { iconText: '💻', desc: 'Apps, redes sociais, inteligência artificial e gadgets', color: '#0284C7' },
+  personalizadas: { iconText: '✨', desc: 'Palavras criadas por você e sua galera', color: '#F59E0B' },
 };
 
 const INDIVIDUAL_CATEGORIES = CATEGORIES.filter(c => c.id !== 'all');
@@ -99,6 +106,28 @@ export function CategoriesScreen() {
           Selecione uma ou mais categorias para diversificar o vocabulário da partida. Palavras serão sorteadas aleatoriamente entre as selecionadas.
         </Typography>
       </View>
+
+      {/* Atalho para Palavras Personalizadas */}
+      <TouchableOpacity
+        style={styles.customWordsBanner}
+        onPress={() => router.push('/impostor/setup/custom-words')}
+        activeOpacity={0.75}
+      >
+        <View style={styles.customWordsBannerLeft}>
+          <View style={styles.customWordsIcon}>
+            <Sparkles size={16} color={theme.colors.suspense} />
+          </View>
+          <View>
+            <Typography variant="body" bold color={theme.colors.text}>
+              Palavras Personalizadas
+            </Typography>
+            <Typography variant="caption" color={theme.colors.textSecondary}>
+              Crie suas próprias palavras com dicas secretas
+            </Typography>
+          </View>
+        </View>
+        <ChevronRight size={18} color={theme.colors.textSecondary} />
+      </TouchableOpacity>
 
       {/* Select All Card */}
       <SelectionCard
@@ -183,5 +212,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 6,
     backgroundColor: 'rgba(6, 182, 212, 0.1)',
+  },
+  customWordsBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(245, 158, 11, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(245, 158, 11, 0.25)',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 16,
+  },
+  customWordsBannerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  customWordsIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
   },
 });

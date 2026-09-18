@@ -69,9 +69,17 @@ export const createEngine = (deps: EngineDependencies) => {
         ? state.settings.categoryIds
         : (state.settings.categoryId ? [state.settings.categoryId] : ['all']);
 
-      const filteredWords = selectedCats.includes('all')
+      let filteredWords = selectedCats.includes('all')
         ? availableWords
         : availableWords.filter(w => selectedCats.includes(w.category));
+      
+      // Filtrar por dificuldade se configurada na partida
+      if (state.settings.difficulty) {
+        const byDifficulty = filteredWords.filter(w => w.difficulty === state.settings.difficulty);
+        if (byDifficulty.length > 0) {
+          filteredWords = byDifficulty;
+        }
+      }
       
       if (filteredWords.length === 0) throw new Error('No words available for this category');
 

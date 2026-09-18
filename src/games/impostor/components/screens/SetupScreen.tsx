@@ -25,6 +25,7 @@ import {
 } from 'lucide-react-native';
 import { Typography } from '@/components/Typography';
 import { useImpostorStore } from '../../store/useImpostorStore';
+import { useCustomWordsStore } from '../../store/useCustomWordsStore';
 import { CATEGORIES } from '../../data/wordBank';
 import { theme } from '@/theme';
 import { useRouter } from 'expo-router';
@@ -34,6 +35,7 @@ export function SetupScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { settings, players, setPlayers, updateSettings, startGame } = useImpostorStore();
+  const customWords = useCustomWordsStore(state => state.customWords);
 
   // If store has no players, provide default 4 players
   const currentPlayers = players.length >= 3 ? players : [
@@ -293,6 +295,37 @@ export function SetupScreen() {
               <View style={[styles.valueBadge, { borderColor: 'rgba(6, 182, 212, 0.3)', backgroundColor: 'rgba(6, 182, 212, 0.1)' }]}>
                 <Typography variant="caption" bold style={{ color: '#67E8F9', fontSize: 12 }} numberOfLines={1}>
                   {categoryBadgeDisplay()}
+                </Typography>
+              </View>
+              <ChevronRight size={18} color={theme.colors.textSecondary} />
+            </View>
+          </TouchableOpacity>
+
+          {/* 5. PALAVRAS PERSONALIZADAS */}
+          <TouchableOpacity
+            style={styles.navCard}
+            onPress={() => router.push('/impostor/setup/custom-words')}
+            activeOpacity={0.75}
+          >
+            <View style={styles.cardLeft}>
+              <View style={[styles.iconContainer, { backgroundColor: 'rgba(245, 158, 11, 0.15)', borderColor: '#F59E0B' }]}>
+                <Sparkles size={22} color="#F59E0B" />
+              </View>
+              <View style={styles.cardTextContainer}>
+                <Typography variant="body" bold style={styles.cardTitle} numberOfLines={1}>
+                  Palavras Personalizadas
+                </Typography>
+                <Typography variant="caption" color={theme.colors.textSecondary} numberOfLines={1}>
+                  {customWords.length === 0
+                    ? 'Crie termos com dicas exclusivas'
+                    : `${customWords.length} ${customWords.length === 1 ? 'palavra salva' : 'palavras salvas'}`}
+                </Typography>
+              </View>
+            </View>
+            <View style={styles.cardRight}>
+              <View style={[styles.valueBadge, { borderColor: 'rgba(245, 158, 11, 0.3)', backgroundColor: 'rgba(245, 158, 11, 0.1)' }]}>
+                <Typography variant="caption" bold style={{ color: '#FCD34D', fontSize: 12 }} numberOfLines={1}>
+                  {customWords.length}
                 </Typography>
               </View>
               <ChevronRight size={18} color={theme.colors.textSecondary} />
