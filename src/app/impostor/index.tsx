@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useImpostorStore } from '@/games/impostor/store/useImpostorStore';
 
 import { SetupScreen } from '@/games/impostor/components/screens/SetupScreen';
@@ -13,6 +13,34 @@ import { ResultScreen } from '@/games/impostor/components/screens/ResultScreen';
 export default function ImpostorGameController() {
   const phase = useImpostorStore(state => state.phase);
 
+  // Durante a fase 'voting', mantemos o RoundScreen montado (mas invisível)
+  // para que o timer continue rodando em background.
+  const isRoundOrVoting = phase === 'round' || phase === 'voting';
+
+  if (isRoundOrVoting) {
+    return (
+      <View style={styles.fill}>
+        {/* RoundScreen sempre montado durante round/voting para manter o timer */}
+        <View
+          style={[
+            styles.fill,
+            phase === 'voting' && styles.hidden,
+          ]}
+          pointerEvents={phase === 'voting' ? 'none' : 'auto'}
+        >
+          <RoundScreen />
+        </View>
+
+        {/* VotingScreen só visível na fase de votação */}
+        {phase === 'voting' && (
+          <View style={[styles.fill, styles.overlay]}>
+            <VotingScreen />
+          </View>
+        )}
+      </View>
+    );
+  }
+
   switch (phase) {
     case 'setup':
     case 'how_to_play':
@@ -21,10 +49,6 @@ export default function ImpostorGameController() {
       return <PreStartScreen />;
     case 'reveal':
       return <RevealScreen />;
-    case 'round':
-      return <RoundScreen />;
-    case 'voting':
-      return <VotingScreen />;
     case 'tiebreak':
       return <TiebreakScreen />;
     case 'impostor_guess':
@@ -35,3 +59,19 @@ export default function ImpostorGameController() {
       return <View />;
   }
 }
+
+const styles = StyleSheet.create({
+  fill: {
+    flex: 1,
+  },
+  hidden: {
+    opacity: 0,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+});
