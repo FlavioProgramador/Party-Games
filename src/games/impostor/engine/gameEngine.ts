@@ -143,8 +143,39 @@ export const createEngine = (deps: EngineDependencies) => {
       return { ...state, revealedCount: nextCount };
     },
 
-    endRound(state: ImpostorGameState): ImpostorGameState {
-      return { ...state, phase: 'voting', votes: {} };
+    endRound(state: ImpostorGameState, remainingSeconds?: number): ImpostorGameState {
+      const calcRemaining = state.roundEndTime 
+        ? Math.max(0, Math.ceil((state.roundEndTime - deps.now()) / 1000)) 
+        : null;
+      const preservedRemaining = remainingSeconds !== undefined ? remainingSeconds : calcRemaining;
+
+      return { 
+        ...state, 
+        phase: 'voting', 
+        votes: {},
+        roundRemainingSeconds: preservedRemaining,
+      };
+    },
+
+    returnToRound(state: ImpostorGameState): ImpostorGameState {
+      if (state.phase !== 'voting') return state;
+
+      let newRoundEndTime = state.roundEndTime;
+      if (state.roundRemainingSeconds !== null && state.roundRemainingSeconds !== undefined) {
+        newRoundEndTime = deps.now() + (state.roundRemainingSeconds * 1000);
+      }
+
+      return {
+        ...state,
+        phase: 'round',
+        roundEndTime: newRoundEndTime,
+        votes: {},
+        accusedPlayerIds: [],
+      };
+    },
+
+    setRoundEndTime(state: ImpostorGameState, roundEndTime: number | null): ImpostorGameState {
+      return { ...state, roundEndTime };
     },
 
     registerVote(state: ImpostorGameState, voterId: string, votedId: string): ImpostorGameState {

@@ -29,7 +29,9 @@ interface ImpostorStoreActions {
   startReveal: () => void;
   reshufflePlayOrder: () => void;
   nextReveal: () => void;
-  endRound: () => void;
+  endRound: (remainingSeconds?: number) => void;
+  returnToRound: () => void;
+  setRoundEndTime: (endTime: number | null) => void;
   registerVote: (voterId: string, votedId: string) => void;
   finishVoting: () => void;
   finishGroupVoting: (accusedPlayerIds: string[]) => void;
@@ -58,7 +60,11 @@ export const useImpostorStore = create<ImpostorStore>()(
       
       nextReveal: () => set(state => engine.nextReveal(state)),
       
-      endRound: () => set(state => engine.endRound(state)),
+      endRound: (remainingSeconds) => set(state => engine.endRound(state, remainingSeconds)),
+      
+      returnToRound: () => set(state => engine.returnToRound(state)),
+
+      setRoundEndTime: (endTime) => set(state => engine.setRoundEndTime(state, endTime)),
       
       registerVote: (voterId, votedId) => set(state => engine.registerVote(state, voterId, votedId)),
       

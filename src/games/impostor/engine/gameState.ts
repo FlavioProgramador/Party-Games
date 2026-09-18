@@ -15,6 +15,7 @@ export interface ImpostorGameState {
   
   // Timer state
   roundEndTime: number | null; // Timestamp
+  roundRemainingSeconds: number | null; // Preserved remaining seconds if entering voting early
   
   // Voting state
   votes: Record<string, string>; // voterId -> votedId
@@ -75,6 +76,7 @@ export const createInitialState = (settings: Partial<GameSettings> = {}): Impost
   playOrder: [],
   revealedCount: 0,
   roundEndTime: null,
+  roundRemainingSeconds: null,
   votes: {},
   tiedPlayers: [],
   accusedPlayerIds: [],

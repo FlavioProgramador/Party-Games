@@ -59,6 +59,32 @@ describe('Impostor Game Engine', () => {
     });
   });
 
+  describe('Round Flow & Return to Round', () => {
+    it('preserves remaining seconds when ending round early and restores them on returnToRound', () => {
+      let state = createInitialState({ timeLimit: 60 });
+      state.phase = 'round';
+      state.roundEndTime = 1000 + 45000;
+
+      // Early transition to voting
+      state = engine.endRound(state, 45);
+      expect(state.phase).toBe('voting');
+      expect(state.roundRemainingSeconds).toBe(45);
+
+      // Return back to round via back button
+      state = engine.returnToRound(state);
+      expect(state.phase).toBe('round');
+      expect(state.roundEndTime).toBe(1000 + 45000);
+      expect(state.votes).toEqual({});
+    });
+
+    it('updates roundEndTime via setRoundEndTime', () => {
+      let state = createInitialState({ timeLimit: 60 });
+      state.phase = 'round';
+      state = engine.setRoundEndTime(state, 75000);
+      expect(state.roundEndTime).toBe(75000);
+    });
+  });
+
   describe('Voting', () => {
     it('does not allow voting for oneself', () => {
       const state = createInitialState({ categoryId: 'all', timeLimit: 60 });
