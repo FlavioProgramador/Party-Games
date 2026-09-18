@@ -6,6 +6,8 @@ import { createEngine } from '../engine/gameEngine';
 import { Player, GameSettings } from '../types';
 import { WORD_BANK } from '../data/wordBank';
 
+const STORE_VERSION = 2; // Bump this to reset persisted data on schema changes
+
 // Instantiate the pure engine with real dependencies
 const engine = createEngine({
   randomItem: <T>(array: T[]) => array[Math.floor(Math.random() * array.length)],
@@ -30,6 +32,7 @@ interface ImpostorStoreActions {
   endRound: () => void;
   registerVote: (voterId: string, votedId: string) => void;
   finishVoting: () => void;
+  finishGroupVoting: (accusedPlayerIds: string[]) => void;
   finishTiebreak: () => void;
   submitImpostorGuess: (guess: string) => void;
   playAgain: () => void;
@@ -60,6 +63,8 @@ export const useImpostorStore = create<ImpostorStore>()(
       registerVote: (voterId, votedId) => set(state => engine.registerVote(state, voterId, votedId)),
       
       finishVoting: () => set(state => engine.finishVoting(state)),
+
+      finishGroupVoting: (accusedPlayerIds) => set(state => engine.finishGroupVoting(state, accusedPlayerIds)),
       
       finishTiebreak: () => set(state => engine.finishTiebreak(state)),
       
@@ -71,8 +76,15 @@ export const useImpostorStore = create<ImpostorStore>()(
     }),
     {
       name: 'impostor-store',
+      version: STORE_VERSION,
       storage: createJSONStorage(() => AsyncStorage),
+      migrate: (_persistedState, version) => {
+        // If the version is old, reset to fresh state
+        if (version < STORE_VERSION) {
+          return createInitialState();
+        }
+        return _persistedState as ImpostorGameState;
+      },
     }
   )
 );
-

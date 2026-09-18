@@ -8,7 +8,7 @@ export const selectCurrentPlayerReveal = (state: ImpostorStore) => {
 };
 
 export const selectIsImpostor = (playerId: string) => (state: ImpostorStore) => {
-  return state.impostorId === playerId;
+  return state.impostorIds.includes(playerId);
 };
 
 export const selectGameSettings = (state: ImpostorStore) => state.settings;

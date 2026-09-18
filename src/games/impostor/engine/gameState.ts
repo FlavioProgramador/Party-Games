@@ -7,7 +7,7 @@ export interface ImpostorGameState {
   
   // Round data
   word: Word | null;
-  impostorId: string | null;
+  impostorIds: string[]; // Support multiple impostors
   playOrder: string[]; // Player IDs in random order
   
   // Reveal state
@@ -19,31 +19,66 @@ export interface ImpostorGameState {
   // Voting state
   votes: Record<string, string>; // voterId -> votedId
   tiedPlayers: string[]; // Player IDs that are tied
+  accusedPlayerIds: string[]; // IDs of players accused by group or most voted
   
   // Result
   winner: 'impostor' | 'players' | null;
   impostorGuess: string | null;
 }
 
+export const DEFAULT_SETTINGS: GameSettings = {
+  timeLimit: 60,
+  impostorCount: {
+    mode: 'fixed',
+    fixedValue: 1,
+    randomRange: { min: 1, max: 2 },
+  },
+  categoryId: 'all',
+  categoryIds: ['all'],
+  difficulty: 'easy',
+  impostorAdvantages: {
+    seeCategory: false,
+    getHint: true,
+    safeStart: false,
+  },
+  votingRules: {
+    accusationMode: 'one_at_a_time',
+    lastChance: true,
+    partialGuess: false,
+    civilianAccusedMeansImpostorWins: false,
+  },
+  votingMode: 'group',
+  votingType: 'all',
+};
+
 export const createInitialState = (settings: Partial<GameSettings> = {}): ImpostorGameState => ({
   phase: 'setup',
   players: [],
   settings: {
-    timeLimit: 60,
-    impostorCount: 1,
-    categoryId: 'all',
-    difficulty: 'normal',
-    impostorAdvantages: false,
-    votingType: 'all',
-    ...settings
+    ...DEFAULT_SETTINGS,
+    ...settings,
+    impostorCount: {
+      ...DEFAULT_SETTINGS.impostorCount,
+      ...(settings.impostorCount || {}),
+    },
+    impostorAdvantages: {
+      ...DEFAULT_SETTINGS.impostorAdvantages,
+      ...(settings.impostorAdvantages || {}),
+    },
+    votingRules: {
+      ...DEFAULT_SETTINGS.votingRules,
+      ...(settings.votingRules || {}),
+    },
   },
   word: null,
-  impostorId: null,
+  impostorIds: [],
   playOrder: [],
   revealedCount: 0,
   roundEndTime: null,
   votes: {},
   tiedPlayers: [],
+  accusedPlayerIds: [],
   winner: null,
   impostorGuess: null,
 });
+

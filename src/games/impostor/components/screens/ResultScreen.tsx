@@ -15,7 +15,7 @@ export function ResultScreen() {
   const store = useImpostorStore();
   const insets = useSafeAreaInsets();
   
-  const impostor = store.players.find(p => p.id === store.impostorId);
+  const impostors = store.players.filter(p => store.impostorIds.includes(p.id));
   const impostorWon = store.winner === 'impostor';
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export function ResultScreen() {
           IMPOSTOR
         </Typography>
         <Typography variant="h2" bold style={{ textAlign: 'center', marginBottom: theme.spacing.md }}>
-          {impostor?.name.toUpperCase()}
+          {impostors.map(p => p.name).join(', ').toUpperCase()}
         </Typography>
 
         {store.impostorGuess && (

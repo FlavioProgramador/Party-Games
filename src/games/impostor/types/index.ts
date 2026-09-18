@@ -22,13 +22,35 @@ export interface Word {
   impostorHint: string;
 }
 
+export interface ImpostorCountConfig {
+  mode: 'fixed' | 'random';
+  fixedValue: number;
+  randomRange: { min: number; max: number };
+}
+
+export interface ImpostorAdvantagesConfig {
+  seeCategory: boolean;
+  getHint: boolean;
+  safeStart: boolean;
+}
+
+export interface VotingRulesConfig {
+  accusationMode: 'one_at_a_time' | 'all_at_once';
+  lastChance: boolean;
+  partialGuess: boolean;
+  civilianAccusedMeansImpostorWins: boolean;
+}
+
 export interface GameSettings {
   timeLimit: number; // In seconds. 0 = no limit
-  impostorCount: number; // Always 1 in v1
-  categoryId: string; // 'all' or specific ID
-  difficulty: 'easy' | 'normal' | 'hard';
-  impostorAdvantages: boolean;
-  votingType: 'all' | 'secret';
+  impostorCount: ImpostorCountConfig;
+  categoryId: string; // 'all' or specific ID (legacy fallback)
+  categoryIds: string[]; // List of selected category IDs or ['all']
+  difficulty: 'easy' | 'medium' | 'hard';
+  impostorAdvantages: ImpostorAdvantagesConfig;
+  votingRules: VotingRulesConfig;
+  votingMode: 'individual' | 'group'; // 'individual' = pass phone, 'group' = collective decision
+  votingType: 'all' | 'secret'; // legacy fallback
 }
 
 export interface VoteResult {

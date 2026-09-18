@@ -43,10 +43,19 @@ describe('Impostor Game Engine', () => {
 
       const nextState = engine.startGame(stateWithPlayers, mockWords);
 
-      expect(nextState.phase).toBe('reveal');
-      expect(nextState.impostorId).toBe('p1'); // Because mock randomItem returns first element
+      expect(nextState.phase).toBe('pre_start');
+      expect(nextState.impostorIds).toEqual(['p1']); // Because mock shuffleArray returns identity and fixed 1 impostor
       expect(nextState.playOrder).toEqual(['p1', 'p2', 'p3', 'p4']);
       expect(nextState.word).toEqual(mockWords[0]);
+    });
+
+    it('filters words across multiple selected categories', () => {
+      const state = createInitialState({ categoryIds: ['animal'], timeLimit: 60 });
+      const stateWithPlayers = engine.setPlayers(state, mockPlayers);
+
+      const nextState = engine.startGame(stateWithPlayers, mockWords);
+
+      expect(nextState.word?.category).toBe('animal');
     });
   });
 
@@ -60,7 +69,7 @@ describe('Impostor Game Engine', () => {
 
     it('transitions to tiebreak on tie', () => {
       let state = createInitialState({ categoryId: 'all', timeLimit: 60 });
-      state.impostorId = 'p1';
+      state.impostorIds = ['p1'];
       
       state = engine.registerVote(state, 'p1', 'p2');
       state = engine.registerVote(state, 'p2', 'p3');
@@ -76,7 +85,7 @@ describe('Impostor Game Engine', () => {
 
     it('transitions to impostor_guess if impostor is most voted', () => {
       let state = createInitialState({ categoryId: 'all', timeLimit: 60 });
-      state.impostorId = 'p1'; // Alice is impostor
+      state.impostorIds = ['p1']; // Alice is impostor
       
       state = engine.registerVote(state, 'p1', 'p2');
       state = engine.registerVote(state, 'p2', 'p1');
@@ -91,7 +100,7 @@ describe('Impostor Game Engine', () => {
 
     it('transitions to result and impostor wins if innocent is eliminated', () => {
       let state = createInitialState({ categoryId: 'all', timeLimit: 60 });
-      state.impostorId = 'p1'; 
+      state.impostorIds = ['p1']; 
       
       state = engine.registerVote(state, 'p1', 'p2');
       state = engine.registerVote(state, 'p2', 'p3');
@@ -109,7 +118,7 @@ describe('Impostor Game Engine', () => {
   describe('Tiebreak', () => {
     it('impostor wins if tie persists', () => {
       let state = createInitialState({ categoryId: 'all', timeLimit: 60 });
-      state.impostorId = 'p1';
+      state.impostorIds = ['p1'];
       state.tiedPlayers = ['p2', 'p3'];
       
       state = engine.registerVote(state, 'p1', 'p2');
@@ -144,6 +153,117 @@ describe('Impostor Game Engine', () => {
       
       expect(state.phase).toBe('result');
       expect(state.winner).toBe('players');
+    });
+  });
+
+  describe('Advantages & Rules', () => {
+    it('ensures safeStart avoids impostor as first player', () => {
+      const state = createInitialState({
+        impostorAdvantages: {
+          seeCategory: false,
+          getHint: true,
+          safeStart: true,
+        },
+      });
+      const stateWithPlayers = engine.setPlayers(state, mockPlayers);
+      // With identity shuffle, p1 would be impostor AND first player
+      const nextState = engine.startGame(stateWithPlayers, mockWords);
+
+      expect(nextState.impostorIds).toEqual(['p1']);
+      expect(nextState.playOrder[0]).not.toBe('p1');
+    });
+
+    it('handles civilian elimination when civilianAccusedMeansImpostorWins is true', () => {
+      let state = createInitialState({
+        votingRules: {
+          accusationMode: 'one_at_a_time',
+          lastChance: true,
+          partialGuess: false,
+          civilianAccusedMeansImpostorWins: true,
+        },
+      });
+      state.impostorIds = ['p1'];
+
+      state = engine.registerVote(state, 'p1', 'p2');
+      state = engine.registerVote(state, 'p2', 'p3');
+      state = engine.registerVote(state, 'p3', 'p2');
+      state = engine.registerVote(state, 'p4', 'p2');
+      // p2 is innocent and got 3 votes
+
+      state = engine.finishVoting(state);
+
+      expect(state.phase).toBe('result');
+      expect(state.winner).toBe('impostor');
+    });
+  });
+
+  describe('Group Voting Mode', () => {
+    it('catches single impostor and grants last chance if enabled', () => {
+      let state = createInitialState({
+        votingRules: {
+          accusationMode: 'one_at_a_time',
+          lastChance: true,
+          partialGuess: false,
+          civilianAccusedMeansImpostorWins: false,
+        },
+      });
+      state.impostorIds = ['p1'];
+
+      // Group correctly chooses p1
+      state = engine.finishGroupVoting(state, ['p1']);
+
+      expect(state.phase).toBe('impostor_guess');
+      expect(state.accusedPlayerIds).toEqual(['p1']);
+    });
+
+    it('gives victory directly to players if lastChance is disabled', () => {
+      let state = createInitialState({
+        votingRules: {
+          accusationMode: 'one_at_a_time',
+          lastChance: false,
+          partialGuess: false,
+          civilianAccusedMeansImpostorWins: false,
+        },
+      });
+      state.impostorIds = ['p1'];
+
+      state = engine.finishGroupVoting(state, ['p1']);
+
+      expect(state.phase).toBe('result');
+      expect(state.winner).toBe('players');
+    });
+
+    it('impostor wins if group accuses an innocent civilian', () => {
+      let state = createInitialState();
+      state.impostorIds = ['p1'];
+
+      // Group mistakenly accuses p2 (innocent)
+      state = engine.finishGroupVoting(state, ['p2']);
+
+      expect(state.phase).toBe('result');
+      expect(state.winner).toBe('impostor');
+    });
+
+    it('handles multiple impostors in group voting', () => {
+      let state = createInitialState({
+        votingRules: {
+          accusationMode: 'one_at_a_time',
+          lastChance: false,
+          partialGuess: false,
+          civilianAccusedMeansImpostorWins: false,
+        },
+      });
+      state.impostorIds = ['p1', 'p2'];
+
+      // Group correctly accuses both p1 and p2
+      const winState = engine.finishGroupVoting(state, ['p1', 'p2']);
+      expect(winState.phase).toBe('result');
+      expect(winState.winner).toBe('players');
+
+      // Group accuses only 1 of the 2 impostors and misses the other
+      const loseState = engine.finishGroupVoting(state, ['p1']);
+      expect(loseState.phase).toBe('result');
+      expect(loseState.winner).toBe('impostor');
     });
   });
 });

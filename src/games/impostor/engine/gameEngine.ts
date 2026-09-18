@@ -12,37 +12,96 @@ export interface EngineDependencies {
 }
 
 export const createEngine = (deps: EngineDependencies) => {
+  /** Resolve how many impostors based on settings and player count */
+  const resolveImpostorCount = (settings: GameSettings, playerCount: number): number => {
+    const { impostorCount } = settings;
+    let count: number;
+
+    if (impostorCount.mode === 'random') {
+      const min = impostorCount.randomRange.min;
+      const max = impostorCount.randomRange.max;
+      count = min + Math.floor(Math.random() * (max - min + 1));
+    } else {
+      count = impostorCount.fixedValue;
+    }
+
+    // Safety: never more impostors than half the players (rounded down) minus 1
+    const maxAllowed = Math.max(1, Math.floor(playerCount / 2) - 1);
+    return Math.min(count, maxAllowed);
+  };
+
   return {
     setPlayers(state: ImpostorGameState, players: Player[]): ImpostorGameState {
       return { ...state, players };
     },
 
     updateSettings(state: ImpostorGameState, settings: Partial<GameSettings>): ImpostorGameState {
-      return { ...state, settings: { ...state.settings, ...settings } };
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          ...settings,
+          // Deep-merge nested objects
+          impostorCount: {
+            ...state.settings.impostorCount,
+            ...(settings.impostorCount || {}),
+            randomRange: {
+              ...state.settings.impostorCount.randomRange,
+              ...(settings.impostorCount?.randomRange || {}),
+            },
+          },
+          impostorAdvantages: {
+            ...state.settings.impostorAdvantages,
+            ...(settings.impostorAdvantages || {}),
+          },
+          votingRules: {
+            ...state.settings.votingRules,
+            ...(settings.votingRules || {}),
+          },
+        },
+      };
     },
 
     startGame(state: ImpostorGameState, availableWords: Word[]): ImpostorGameState {
       if (state.players.length < 3) throw new Error('Not enough players');
       
-      const filteredWords = state.settings.categoryId === 'all' 
-        ? availableWords 
-        : availableWords.filter(w => w.category === state.settings.categoryId);
+      const selectedCats = state.settings.categoryIds && state.settings.categoryIds.length > 0
+        ? state.settings.categoryIds
+        : (state.settings.categoryId ? [state.settings.categoryId] : ['all']);
+
+      const filteredWords = selectedCats.includes('all')
+        ? availableWords
+        : availableWords.filter(w => selectedCats.includes(w.category));
       
       if (filteredWords.length === 0) throw new Error('No words available for this category');
 
       const word = deps.randomItem(filteredWords);
-      const impostorId = deps.randomItem(state.players).id;
-      const playOrder = deps.shuffleArray(state.players).map(p => p.id);
+      
+      // Select impostor(s)
+      const impostorCount = resolveImpostorCount(state.settings, state.players.length);
+      const shuffledPlayers = deps.shuffleArray([...state.players]);
+      const impostorIds = shuffledPlayers.slice(0, impostorCount).map(p => p.id);
+      
+      let playOrder = deps.shuffleArray(state.players).map(p => p.id);
+      if (state.settings.impostorAdvantages.safeStart && impostorIds.includes(playOrder[0])) {
+        const safeIndex = playOrder.findIndex(id => !impostorIds.includes(id));
+        if (safeIndex > 0) {
+          const temp = playOrder[0];
+          playOrder[0] = playOrder[safeIndex];
+          playOrder[safeIndex] = temp;
+        }
+      }
 
       return {
         ...state,
         phase: 'pre_start',
         word,
-        impostorId,
+        impostorIds,
         playOrder,
         revealedCount: 0,
         votes: {},
         tiedPlayers: [],
+        accusedPlayerIds: [],
         winner: null,
         impostorGuess: null,
         roundEndTime: null
@@ -54,7 +113,15 @@ export const createEngine = (deps: EngineDependencies) => {
     },
 
     reshufflePlayOrder(state: ImpostorGameState): ImpostorGameState {
-      const playOrder = deps.shuffleArray(state.players).map(p => p.id);
+      let playOrder = deps.shuffleArray(state.players).map(p => p.id);
+      if (state.settings.impostorAdvantages.safeStart && state.impostorIds.includes(playOrder[0])) {
+        const safeIndex = playOrder.findIndex(id => !state.impostorIds.includes(id));
+        if (safeIndex > 0) {
+          const temp = playOrder[0];
+          playOrder[0] = playOrder[safeIndex];
+          playOrder[safeIndex] = temp;
+        }
+      }
       return { ...state, playOrder };
     },
 
@@ -99,11 +166,43 @@ export const createEngine = (deps: EngineDependencies) => {
       }
 
       const eliminatedId = mostVoted[0];
-      if (eliminatedId === state.impostorId) {
-        return { ...state, phase: 'impostor_guess' };
+      
+      // Check if the eliminated player is an impostor
+      if (state.impostorIds.includes(eliminatedId)) {
+        // If lastChance is enabled, give the impostor a chance to guess
+        if (state.settings.votingRules.lastChance) {
+          return { ...state, accusedPlayerIds: [eliminatedId], phase: 'impostor_guess' };
+        }
+        return { ...state, accusedPlayerIds: [eliminatedId], phase: 'result', winner: 'players' };
       }
 
-      return { ...state, phase: 'result', winner: 'impostor' };
+      // Civilian was eliminated
+      if (state.settings.votingRules.civilianAccusedMeansImpostorWins) {
+        return { ...state, accusedPlayerIds: [eliminatedId], phase: 'result', winner: 'impostor' };
+      }
+
+      return { ...state, accusedPlayerIds: [eliminatedId], phase: 'result', winner: 'impostor' };
+    },
+
+    finishGroupVoting(state: ImpostorGameState, accusedPlayerIds: string[]): ImpostorGameState {
+      if (accusedPlayerIds.length === 0) throw new Error('No players selected for group voting');
+
+      // Check if any accused player is an innocent
+      const accusedAnInnocent = accusedPlayerIds.some(id => !state.impostorIds.includes(id));
+
+      // Check if all actual impostors were accused
+      const caughtAllImpostors = state.impostorIds.every(id => accusedPlayerIds.includes(id));
+
+      const isSuccess = !accusedAnInnocent && caughtAllImpostors;
+
+      if (isSuccess) {
+        if (state.settings.votingRules.lastChance) {
+          return { ...state, accusedPlayerIds, phase: 'impostor_guess' };
+        }
+        return { ...state, accusedPlayerIds, phase: 'result', winner: 'players' };
+      }
+
+      return { ...state, accusedPlayerIds, phase: 'result', winner: 'impostor' };
     },
 
     finishTiebreak(state: ImpostorGameState): ImpostorGameState {
@@ -118,8 +217,11 @@ export const createEngine = (deps: EngineDependencies) => {
       }
 
       const eliminatedId = mostVoted[0];
-      if (eliminatedId === state.impostorId) {
-        return { ...state, phase: 'impostor_guess' };
+      if (state.impostorIds.includes(eliminatedId)) {
+        if (state.settings.votingRules.lastChance) {
+          return { ...state, phase: 'impostor_guess' };
+        }
+        return { ...state, phase: 'result', winner: 'players' };
       }
 
       return { ...state, phase: 'result', winner: 'impostor' };

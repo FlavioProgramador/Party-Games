@@ -137,12 +137,29 @@ export function RevealScreen() {
                   <Typography variant="h2" bold color={theme.colors.danger} style={{ marginTop: theme.spacing.xl, marginBottom: 8, textAlign: 'center' }}>
                     VOCÊ É O IMPOSTOR
                   </Typography>
-                  <Typography variant="label" color={theme.colors.textSecondary} style={{ textAlign: 'center', marginBottom: 4 }}>
-                    SUA DICA
-                  </Typography>
-                  <Typography variant="h3" bold style={{ textAlign: 'center', fontStyle: 'italic' }}>
-                    "{store.word?.impostorHint}"
-                  </Typography>
+
+                  {store.settings.impostorAdvantages?.seeCategory && store.word?.category && (
+                    <View style={{ marginBottom: 12, alignItems: 'center' }}>
+                      <Typography variant="label" color={theme.colors.secondary} bold style={{ letterSpacing: 1 }}>
+                        CATEGORIA: {store.word.category.toUpperCase()}
+                      </Typography>
+                    </View>
+                  )}
+
+                  {store.settings.impostorAdvantages?.getHint ? (
+                    <>
+                      <Typography variant="label" color={theme.colors.textSecondary} style={{ textAlign: 'center', marginBottom: 4 }}>
+                        SUA DICA
+                      </Typography>
+                      <Typography variant="h3" bold style={{ textAlign: 'center', fontStyle: 'italic' }}>
+                        "{store.word?.impostorHint}"
+                      </Typography>
+                    </>
+                  ) : (
+                    <Typography variant="caption" color={theme.colors.textMuted} style={{ textAlign: 'center', fontStyle: 'italic' }}>
+                      (Dicas desativadas para esta rodada)
+                    </Typography>
+                  )}
                 </>
               ) : (
                 <>
