@@ -169,7 +169,7 @@ export function RoundScreen() {
   const handleEndRound = () => {
     hapticsService.triggerImpact();
     audioService.playSound('click');
-    store.endRound(timeLeft ?? undefined);
+    store.endRound();
   };
 
   const durationSeconds = store.settings.timeLimit || 60;

@@ -60,20 +60,21 @@ describe('Impostor Game Engine', () => {
   });
 
   describe('Round Flow & Return to Round', () => {
-    it('preserves remaining seconds when ending round early and restores them on returnToRound', () => {
+    it('keeps roundEndTime running continuously so time spent in voting elapses naturally', () => {
       let state = createInitialState({ timeLimit: 60 });
       state.phase = 'round';
-      state.roundEndTime = 1000 + 45000;
+      const initialEndTime = 1000 + 45000;
+      state.roundEndTime = initialEndTime;
 
       // Early transition to voting
-      state = engine.endRound(state, 45);
+      state = engine.endRound(state);
       expect(state.phase).toBe('voting');
-      expect(state.roundRemainingSeconds).toBe(45);
+      expect(state.roundEndTime).toBe(initialEndTime);
 
-      // Return back to round via back button
+      // Return back to round via back button - roundEndTime is identical and keeps running
       state = engine.returnToRound(state);
       expect(state.phase).toBe('round');
-      expect(state.roundEndTime).toBe(1000 + 45000);
+      expect(state.roundEndTime).toBe(initialEndTime);
       expect(state.votes).toEqual({});
     });
 
